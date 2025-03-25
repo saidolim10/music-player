@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f3f3f3;
+            color: black;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            gap: 30px;
+        }
+        .music-player, .playlist {
+            width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .music-player img {
+            width: 100%;
+            border-radius: 15px;
+        }
+        .playlist {
+            padding: 20px;
+        }
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .playlist-item:hover {
+            background: #e0e0e0;
+        }
+        .playlist-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .playlist-item div {
+            flex: 1;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .controls button {
+            font-size: 18px;
+            padding: 12px;
+            border: none;
+            background: #1DB954;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .controls button:hover {
+            background: #17a74a;
+        }
+        #cover {
+            width: 60%;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="music-player">
+        <h2>Music App</h2>
+        <img id="cover" src="./doda.jpg" alt="Album Cover">
+        <h3 id="title">none</h3>
+        <p id="artist">none</p>
+        <audio id="audio" src="./gorila-315977.mp3"></audio>
+        
+        <input type="range" id="progress" value="0" max="100">
+        
+        <div class="controls">
+            <button id="prev">⏮</button>
+            <button id="play">▶</button>
+            <button id="next">⏭</button>
+        </div>
+    </div>
+
+    <div class="playlist">
+        <h3>Playlist</h3>
+        <div class="playlist-item" data-src="./music1.mp3" data-title="Minor" data-artist="Miyagi" data-img="./doda.jpg">
+            <img src="./doda.jpg" alt="Track">
+            <div>
+                <p>Minor</p>
+                <small>Miyagi</small>
+            </div>
+            <span>2:55</span>
+        </div>
+        <div class="playlist-item" data-src="./music2.mp3" data-title="Патрон" data-artist="Miyagi" data-img="./doda.jpg">
+            <img src="./doda.jpg" alt="Track">
+            <div>
+                <p>Патрон</p>
+                <small>Miyagi</small>
+            </div>
+            <span>3:45</span>
+        </div>
+        <div class="playlist-item" data-src="./music3.mp3" data-title="Memories" data-artist="Xcho & Macan" data-img="./img2.jpg">
+            <img src="./img2.jpg" alt="Track">
+            <div>
+                <p>Memories</p>
+                <small>Xcho & Macan</small>
+            </div>
+            <span>2:50</span>
+        </div>
+        <div class="playlist-item" data-src="./music4.mp3" data-title="Hit em up" data-artist="2pac" data-img="./img4.jpg">
+            <img src="./img4.jpg" alt="Track">
+            <div>
+                <p>Hit em up</p>
+                <small>2pac</small>
+            </div>
+            <span>5:08</span>
+        </div>
+        <div class="playlist-item" data-src="./music5.mp3" data-title="Venom" data-artist="Eminem" data-img="./img5.jpg">
+            <img src="./img5.jpg" alt="Track">
+            <div>
+                <p>Venom</p>
+                <small>Eminem</small>
+            </div>
+            <span>4:29</span>
+        </div>
+        
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playButton = document.getElementById('play');
+        const progress = document.getElementById('progress');
+        const title = document.getElementById('title');
+        const artist = document.getElementById('artist');
+        const cover = document.getElementById('cover');
+        const playlistItems = document.querySelectorAll('.playlist-item');
+        let currentSongIndex = 0;
+
+        // Function to play a song
+        function playSong(index) {
+            const song = playlistItems[index];
+            const songSrc = song.getAttribute('data-src');
+            const songTitle = song.getAttribute('data-title');
+            const songArtist = song.getAttribute('data-artist');
+            const imgSrc = song.getAttribute('data-img');
+
+            audio.src = songSrc;
+            title.textContent = songTitle;
+            artist.textContent = songArtist;
+            cover.src = imgSrc;
+            audio.play();
+            playButton.textContent = '⏸';
+        }
+
+        // Play button functionality
+        playButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playButton.textContent = '⏸';
+            } else {
+                audio.pause();
+                playButton.textContent = '▶';
+            }
+        });
+
+        // Update progress bar as the song plays
+        audio.addEventListener('timeupdate', () => {
+            progress.value = (audio.currentTime / audio.duration) * 100;
+        });
+
+        // Allow progress bar to seek within the track
+        progress.addEventListener('input', () => {
+            audio.currentTime = (progress.value / 100) * audio.duration;
+        });
+
+        // Next song functionality
+        document.getElementById('next').addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex + 1) % playlistItems.length;  // Loop to the first song after the last
+            playSong(currentSongIndex);
+        });
+
+        // Previous song functionality
+        document.getElementById('prev').addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex - 1 + playlistItems.length) % playlistItems.length;  // Loop to the last song if at the first
+            playSong(currentSongIndex);
+        });
+
+        // Play the first song initially
+        playSong(currentSongIndex);
+
+        // Click on a playlist item to play it
+        playlistItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentSongIndex = index;
+                playSong(currentSongIndex);
+            });
+        });
+    </script>
+</body>
+</html>
